@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tamax Women’s Shoes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e9e8e4; --paper:#f1f0ed; --ink:#232321; --mute:#85847d; --line:#cdccc6; --stone:#d8d6cf; --dark:#2b2b29;
+  --serif:"Instrument Serif",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.55;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .2  0 0 0 0 .2  0 0 0 0 .18  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+a{color:inherit}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-size:26px;text-decoration:none;letter-spacing:.01em}
+nav{display:flex;gap:26px;align-items:center;font-size:15px}
+nav a{text-decoration:none;color:var(--mute)}
+nav a:hover{color:var(--ink)}
+.cart-btn{background:none;border:1px solid var(--ink);border-radius:999px;padding:7px 16px;font-size:14px}
+.cart-btn:hover{background:var(--ink);color:var(--paper)}
+
+.hero{padding:96px 0 84px;display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:end}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(56px,10vw,128px);line-height:.92;letter-spacing:-.02em}
+.hero h1 span{display:block;font-size:.36em;letter-spacing:0;margin-top:18px;color:var(--mute)}
+.hero p{max-width:340px;color:var(--mute);font-size:17px}
+.hero a.go{display:inline-block;margin-top:24px;padding:13px 26px;background:var(--ink);color:var(--paper);text-decoration:none;border-radius:2px}
+.hero a.go:hover{background:#000}
+
+.sec-title{font-family:var(--serif);font-weight:400;font-size:40px;margin:8px 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:36px 24px}
+.card .pic{
+  aspect-ratio:4/5;background:var(--stone);display:grid;place-items:center;overflow:hidden;
+  background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.025) 0 2px,transparent 2px 5px);
+}
+.card .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.card .pic b{font-family:var(--serif);font-weight:400;font-size:64px;color:var(--mute)}
+.card h3{font-size:16px;font-weight:500;margin-top:14px}
+.card .price{color:var(--mute);font-size:15px}
+.sizes{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.sizes button{width:38px;height:34px;background:none;border:1px solid var(--line);border-radius:2px;font-size:13px}
+.sizes button:hover{border-color:var(--ink)}
+.sizes button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.add{width:100%;padding:11px;background:none;border:1px solid var(--ink);border-radius:2px}
+.add:hover{background:var(--ink);color:var(--paper)}
+.note{font-size:13px;color:#9a3b2e;min-height:18px;margin-top:6px}
+
+.info{margin:96px 0 0;padding:56px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.info h4{font-family:var(--serif);font-weight:400;font-size:24px;margin-bottom:6px}
+.info p{color:var(--mute);font-size:15px}
+footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--mute);font-size:14px}
+
+/* кошик */
+.shade{position:fixed;inset:0;background:rgba(20,20,18,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+.shade.on{opacity:1;pointer-events:auto}
+aside{position:fixed;top:0;right:0;height:100%;width:min(420px,100%);background:var(--paper);transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;padding:24px;overflow:auto}
+aside.on{transform:none}
+aside h2{font-family:var(--serif);font-weight:400;font-size:32px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.x{background:none;border:0;font-size:26px;line-height:1}
+.line{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.line small{color:var(--mute);display:block}
+.line button{background:none;border:0;color:var(--mute);font-size:13px;text-decoration:underline}
+.total{display:flex;justify-content:space-between;font-size:18px;margin:16px 0}
+.empty{color:var(--mute);padding:20px 0}
+form{display:grid;gap:10px;margin-top:4px}
+input,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);background:#f8f7f5;border-radius:2px;font:inherit}
+input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
+.send{padding:14px;background:var(--ink);color:var(--paper);border:0;border-radius:2px}
+.send:hover{background:#000}
+.hint{font-size:13px;color:var(--mute)}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;padding:56px 0}
+  .info{grid-template-columns:1fr}
+  nav a.hide{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="logo" href="#top">Tamax Women’s Shoes</a>
+    <nav>
+      <a class="hide" href="#catalog">Каталог</a>
+      <a class="hide" href="#info">Доставка</a>
+      <button class="cart-btn" id="open">Кошик (<span id="count">0</span>)</button>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <h1>Tamax<span>Women’s Shoes</span></h1>
+    <div>
+      <p>Жіноче взуття спокійних форм і натуральних відтінків. Обирайте розмір і оформлюйте замовлення за хвилину.</p>
+      <a class="go" href="#catalog">Дивитись каталог</a>
+    </div>
+  </section>
+
+  <section id="catalog">
+    <h2 class="sec-title">Каталог</h2>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="info" id="info">
+    <div><h4>Доставка</h4><p>Нова Пошта по всій Україні. Відправляємо в день замовлення або наступного дня.</p></div>
+    <div><h4>Оплата</h4><p>Накладений платіж або переказ на картку. Домовимось у месенджері після замовлення.</p></div>
+    <div><h4>Обмін і повернення</h4><p>Не підійшов розмір? Напишіть нам, і ми допоможемо з обміном.</p></div>
+  </section>
+
+  <footer>© Tamax Women’s Shoes</footer>
+</div>
+
+<div class="shade" id="shade"></div>
+<aside id="panel" aria-label="Кошик" aria-hidden="true">
+  <div class="top"><h2>Кошик</h2><button class="x" id="close" aria-label="Закрити кошик">×</button></div>
+  <div id="lines"></div>
+  <div class="total"><span>Разом</span><strong id="total">0</strong></div>
+  <form id="order">
+    <input name="name" placeholder="Ім’я" required autocomplete="name">
+    <input name="phone" placeholder="Телефон" required autocomplete="tel" inputmode="tel">
+    <input name="city" placeholder="Місто і відділення Нової Пошти" required>
+    <textarea name="comment" rows="2" placeholder="Коментар (необов’язково)"></textarea>
+    <button class="send" type="submit">Надіслати замовлення в Telegram</button>
+    <p class="hint">Відкриється Telegram з готовим повідомленням. Залишиться натиснути «Надіслати».</p>
+  </form>
+</aside>
+
+<script>
+/* ====== НАЛАШТУВАННЯ (змінюйте тут) ====== */
+const TELEGRAM_USERNAME = "your_username";   // ваш нік у Telegram без @
+const CURRENCY = "грн";
+
+// Додавайте й змінюйте товари тут. img: шлях до фото, наприклад "img/loafer.jpg". Якщо порожньо, буде заглушка.
+const PRODUCTS = [
+  { id: 1, name: "Лофери «Ліна»",        price: 1890, sizes: [36,37,38,39,40], img: "" },
+  { id: 2, name: "Балетки «Ніка»",        price: 1490, sizes: [36,37,38,39],    img: "" },
+  { id: 3, name: "Ботильйони «Мірта»",    price: 2790, sizes: [37,38,39,40,41], img: "" },
+  { id: 4, name: "Кросівки «Сана»",       price: 2190, sizes: [36,37,38,39,40,41], img: "" },
+  { id: 5, name: "Сандалі «Алма»",        price: 1590, sizes: [36,37,38,39],    img: "" },
+  { id: 6, name: "Туфлі-човники «Ірма»",  price: 2390, sizes: [36,37,38,39,40], img: "" }
+];
+/* ========================================= */
+
+const $ = s => document.querySelector(s);
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem("tamax-cart")) || []; } catch(e) {}
+const save = () => { try { localStorage.setItem("tamax-cart", JSON.stringify(cart)); } catch(e) {} };
+const fmt = n => n.toLocaleString("uk-UA") + " " + CURRENCY;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* каталог */
+const chosen = {};
+$("#grid").innerHTML = PRODUCTS.map(p => `
+  <article class="card" data-id="${p.id}">
+    <div class="pic">${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy">` : `<b>${esc(p.name.charAt(0))}</b>`}</div>
+    <h3>${esc(p.name)}</h3>
+    <div class="price">${fmt(p.price)}</div>
+    <div class="sizes" role="group" aria-label="Розмір">
+      ${p.sizes.map(s => `<button type="button" data-size="${s}" aria-pressed="false">${s}</button>`).join("")}
+    </div>
+    <button class="add" type="button">Додати в кошик</button>
+    <div class="note" aria-live="polite"></div>
+  </article>`).join("");
+
+$("#grid").addEventListener("click", e => {
+  const card = e.target.closest(".card"); if (!card) return;
+  const id = +card.dataset.id;
+  if (e.target.dataset.size) {
+    chosen[id] = +e.target.dataset.size;
+    card.querySelectorAll(".sizes button").forEach(b => b.setAttribute("aria-pressed", b === e.target));
+    card.querySelector(".note").textContent = "";
+  }
+  if (e.target.classList.contains("add")) {
+    if (!chosen[id]) { card.querySelector(".note").textContent = "Оберіть розмір"; return; }
+    const found = cart.find(l => l.id === id && l.size === chosen[id]);
+    found ? found.qty++ : cart.push({ id, size: chosen[id], qty: 1 });
+    save(); render(); openCart();
+  }
+});
+
+/* кошик */
+function render() {
+  const lines = cart.map((l, i) => {
+    const p = PRODUCTS.find(x => x.id === l.id); if (!p) return "";
+    return `<div class="line"><div>${esc(p.name)}<small>Розмір ${l.size} · ${l.qty} шт.</small></div>
+      <div style="text-align:right">${fmt(p.price * l.qty)}<br><button type="button" data-rm="${i}">Прибрати</button></div></div>`;
+  }).join("");
+  $("#lines").innerHTML = lines || `<p class="empty">Кошик порожній. Оберіть взуття в каталозі.</p>`;
+  const sum = cart.reduce((s, l) => s + (PRODUCTS.find(x => x.id === l.id)?.price || 0) * l.qty, 0);
+  $("#total").textContent = fmt(sum);
+  $("#count").textContent = cart.reduce((s, l) => s + l.qty, 0);
+}
+$("#lines").addEventListener("click", e => {
+  if (e.target.dataset.rm !== undefined) { cart.splice(+e.target.dataset.rm, 1); save(); render(); }
+});
+
+const openCart = () => { $("#panel").classList.add("on"); $("#shade").classList.add("on"); $("#panel").setAttribute("aria-hidden","false"); };
+const closeCart = () => { $("#panel").classList.remove("on"); $("#shade").classList.remove("on"); $("#panel").setAttribute("aria-hidden","true"); };
+$("#open").onclick = openCart; $("#close").onclick = closeCart; $("#shade").onclick = closeCart;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeCart(); });
+
+/* замовлення в Telegram */
+$("#order").addEventListener("submit", e => {
+  e.preventDefault();
+  if (!cart.length) { alert("Спочатку додайте товар у кошик."); return; }
+  const f = new FormData(e.target);
+  let sum = 0;
+  const items = cart.map(l => {
+    const p = PRODUCTS.find(x => x.id === l.id); sum += p.price * l.qty;
+    return `• ${p.name}, розмір ${l.size}, ${l.qty} шт. — ${fmt(p.price * l.qty)}`;
+  }).join("\n");
+  const text = `Нове замовлення Tamax\n\n${items}\n\nРазом: ${fmt(sum)}\n\nІм’я: ${f.get("name")}\nТелефон: ${f.get("phone")}\nДоставка: ${f.get("city")}` +
+    (f.get("comment") ? `\nКоментар: ${f.get("comment")}` : "");
+  window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(text)}`, "_blank");
+});
+
+render();
+</script>
+</body>
+</html>
