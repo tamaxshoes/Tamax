@@ -9,7 +9,8 @@
 <style>
 :root{
   --bg:#e9e8e4; --paper:#f1f0ed; --ink:#232321; --mute:#85847d; --line:#cdccc6; --stone:#d8d6cf; --dark:#2b2b29;
-  --serif:"Lora",Georgia,serif;
+  --serif:"Lora",Georgia,serif; --sans:"Hanken Grotesk",system-ui,sans-serif;
+}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
 body{
@@ -79,6 +80,32 @@ input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
 .send:hover{background:#000}
 .hint{font-size:13px;color:var(--mute)}
 
+
+/* вікно товару */
+.card{cursor:pointer}
+.card:hover h3{text-decoration:underline}
+.modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(20,20,18,.5);z-index:20;padding:16px}
+.modal.on{display:grid}
+.sheet{position:relative;background:var(--paper);width:min(920px,100%);max-height:92vh;overflow:auto;display:grid;grid-template-columns:1.1fr 1fr}
+.gal{position:relative;background:var(--stone);align-self:start}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:4/5;display:grid;place-items:center;background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.025) 0 2px,transparent 2px 5px)}
+.slide img{width:100%;height:100%;object-fit:cover}
+.slide b{font-family:var(--serif);font-weight:400;font-size:80px;color:var(--mute)}
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(241,240,237,.9);font-size:20px}
+.arr:hover{background:#fff}
+#prev{left:10px}#next{right:10px}
+.gal.single .arr{display:none}
+.mbody{padding:36px 30px}
+.mbody h2{font-family:var(--serif);font-weight:400;font-size:36px;line-height:1.1}
+.mbody .price{font-size:20px;margin:8px 0 16px}
+.mbody .desc{color:var(--mute);white-space:pre-line;margin-bottom:18px}
+.mbody .label{font-size:13px;color:var(--mute);margin-top:4px}
+.mx{position:absolute;top:8px;right:12px;z-index:2;background:rgba(241,240,237,.9);border-radius:50%;width:36px;height:36px}
+.buy{width:100%;padding:14px;background:var(--ink);color:var(--paper);border:0;border-radius:2px}
+.buy:hover{background:#000}
+@media (max-width:760px){.sheet{grid-template-columns:1fr}.mbody{padding:24px 20px}}
 @media (max-width:760px){
   .hero{grid-template-columns:1fr;padding:56px 0}
   .info{grid-template-columns:1fr}
@@ -87,7 +114,7 @@ input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
-<body
+<body>
 
 <div class="wrap">
   <header>
@@ -102,7 +129,7 @@ input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
   <section class="hero" id="top">
     <h1>Tamax<span>Women’s Shoes</span></h1>
     <div>
-      <p>Жіноче взуття саме для вашої ніжки. Обирайте розмір і оформлюйте замовлення за хвилину. </p>
+      <p>Жіноче взуття саме для вашої ніжки. Обирайте розмір і оформлюйте замовлення за хвилину.</p>
       <a class="go" href="#catalog">Дивитись каталог</a>
     </div>
   </section>
@@ -113,12 +140,32 @@ input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
   </section>
 
   <section class="info" id="info">
-    <div><h4>Доставка</h4><p>Нова Пошта та Укрпошта по всій Україні. </p></div>
+    <div><h4>Доставка</h4><p>Нова Пошта та Укрпошта по всій Україні.</p></div>
     <div><h4>Оплата</h4><p>Накладений платіж за мінімальною предоплатою 200 грн. або повна оплата на картку. Домовимось у месенджері після замовлення.</p></div>
     <div><h4>Обмін і повернення</h4><p>Не підійшов розмір? Напишіть нам, і ми допоможемо з обміном.</p></div>
   </section>
 
   <footer>© Tamax Women’s Shoes</footer>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-name">
+    <button class="x mx" id="mclose" aria-label="Закрити">×</button>
+    <div class="gal" id="gal">
+      <div class="track" id="track"></div>
+      <button class="arr" id="prev" aria-label="Попереднє фото">‹</button>
+      <button class="arr" id="next" aria-label="Наступне фото">›</button>
+    </div>
+    <div class="mbody">
+      <h2 id="m-name"></h2>
+      <div class="price" id="m-price"></div>
+      <p class="desc" id="m-desc"></p>
+      <div class="label">Розмір</div>
+      <div class="sizes" id="m-sizes" role="group" aria-label="Розмір"></div>
+      <button class="buy" id="buy" type="button">Замовити</button>
+      <div class="note" id="m-note" aria-live="polite"></div>
+    </div>
+  </div>
 </div>
 
 <div class="shade" id="shade"></div>
@@ -143,13 +190,14 @@ const CURRENCY = "грн";
 
 // Додавайте й змінюйте товари тут. img: шлях до фото, наприклад "img/loafer.jpg". Якщо порожньо, буде заглушка.
 const PRODUCTS = [
-  { id: 1, name: "Чорні лофери MIU MIU всередині хутро",  price: 1750, sizes: [36,37,38,39,40], img: "photo_2026-11-14_15-20-21.jpg" },
-  { id: 2, name: "Чорні уги (натуральна шкіра) всередині хутро",  price: 1400, sizes: [36,37,38,39],    img: "" },
-  { id: 3, name: "Шоколадні лофери (брендовані) всередині хутро",  price: 1500, sizes: [37,38,39,40,41], img: "" },
-  { id: 4, name: "Білі кросівки New Balance всередиі хутро (еко шкіра) ",  price: 1430, sizes: [36,37,38,39,40,41], img: "" },
-  { id: 5, name: "Біло-чорні кросівки New Balance всередиі хутро (еко шкіра-замша) ",  price: 1430, sizes: [36,37,38,39],    img: "" },
-  { id: 6, name: "Білі кросівки New Balance всередиі хутро (еко шкіра-замша)",  price: 1430, sizes: [36,37,38,39,40], img: "" }
-  { id: 7, name: "Шоколадні кросівки New Balance всередиі хутро (еко шкіра-замша)",  price: 1430, sizes: [36,37,38,39,40], img: "" }
+  // imgs: фото через кому, наприклад ["a.jpg","b.jpg"]. desc: опис товару (\n = новий рядок).
+  { id: 1, name: "Чорні лофери MIU MIU всередині хутро", price: 1750, sizes: [36,37,38,39,40], imgs: ["photo_2026-11-14_15-20-21.jpg"], desc: "" },
+  { id: 2, name: "Чорні уги (натуральна шкіра) всередині хутро", price: 1400, sizes: [36,37,38,39], imgs: [], desc: "" },
+  { id: 3, name: "Шоколадні лофери (брендовані) всередині хутро", price: 1500, sizes: [37,38,39,40,41], imgs: [], desc: "" },
+  { id: 4, name: "Білі кросівки New Balance всередині хутро (еко шкіра)", price: 1430, sizes: [36,37,38,39,40,41], imgs: [], desc: "" },
+  { id: 5, name: "Біло-чорні кросівки New Balance всередині хутро (еко шкіра-замша)", price: 1430, sizes: [36,37,38,39], imgs: [], desc: "" },
+  { id: 6, name: "Білі кросівки New Balance всередині хутро (еко шкіра-замша)", price: 1430, sizes: [36,37,38,39,40], imgs: [], desc: "" },
+  { id: 7, name: "Шоколадні кросівки New Balance всередині хутро (еко шкіра-замша)", price: 1430, sizes: [36,37,38,39,40], imgs: [], desc: "" }
 ];
 /* ========================================= */
 
@@ -161,34 +209,52 @@ const fmt = n => n.toLocaleString("uk-UA") + " " + CURRENCY;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* каталог */
-const chosen = {};
+const gallery = p => (p.imgs && p.imgs.length) ? p.imgs : (p.img ? [p.img] : []);
+const slide = (p, src) => src ? `<img src="${esc(src)}" alt="${esc(p.name)}" loading="lazy">` : `<b>${esc(p.name.charAt(0))}</b>`;
 $("#grid").innerHTML = PRODUCTS.map(p => `
-  <article class="card" data-id="${p.id}">
-    <div class="pic">${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy">` : `<b>${esc(p.name.charAt(0))}</b>`}</div>
+  <article class="card" data-id="${p.id}" tabindex="0" role="button" aria-label="${esc(p.name)}">
+    <div class="pic">${slide(p, gallery(p)[0])}</div>
     <h3>${esc(p.name)}</h3>
     <div class="price">${fmt(p.price)}</div>
-    <div class="sizes" role="group" aria-label="Розмір">
-      ${p.sizes.map(s => `<button type="button" data-size="${s}" aria-pressed="false">${s}</button>`).join("")}
-    </div>
-    <button class="add" type="button">Додати в кошик</button>
-    <div class="note" aria-live="polite"></div>
   </article>`).join("");
 
-$("#grid").addEventListener("click", e => {
-  const card = e.target.closest(".card"); if (!card) return;
-  const id = +card.dataset.id;
-  if (e.target.dataset.size) {
-    chosen[id] = +e.target.dataset.size;
-    card.querySelectorAll(".sizes button").forEach(b => b.setAttribute("aria-pressed", b === e.target));
-    card.querySelector(".note").textContent = "";
-  }
-  if (e.target.classList.contains("add")) {
-    if (!chosen[id]) { card.querySelector(".note").textContent = "Оберіть розмір"; return; }
-    const found = cart.find(l => l.id === id && l.size === chosen[id]);
-    found ? found.qty++ : cart.push({ id, size: chosen[id], qty: 1 });
-    save(); render(); openCart();
-  }
+let cur = null, curSize = null;
+function openProduct(id) {
+  cur = PRODUCTS.find(p => p.id === id); curSize = null;
+  const g = gallery(cur);
+  $("#track").innerHTML = (g.length ? g : [""]).map(src => `<div class="slide">${slide(cur, src)}</div>`).join("");
+  $("#track").scrollLeft = 0;
+  $("#gal").classList.toggle("single", g.length < 2);
+  $("#m-name").textContent = cur.name;
+  $("#m-price").textContent = fmt(cur.price);
+  $("#m-desc").textContent = cur.desc || "";
+  $("#m-sizes").innerHTML = cur.sizes.map(s => `<button type="button" data-size="${s}" aria-pressed="false">${s}</button>`).join("");
+  $("#m-note").textContent = "";
+  $("#modal").classList.add("on"); $("#modal").setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden";
+}
+function closeProduct() {
+  $("#modal").classList.remove("on"); $("#modal").setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+}
+$("#grid").addEventListener("click", e => { const c = e.target.closest(".card"); if (c) openProduct(+c.dataset.id); });
+$("#grid").addEventListener("keydown", e => { const c = e.target.closest(".card"); if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openProduct(+c.dataset.id); } });
+$("#m-sizes").addEventListener("click", e => {
+  if (!e.target.dataset.size) return;
+  curSize = +e.target.dataset.size;
+  $("#m-sizes").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === e.target));
+  $("#m-note").textContent = "";
 });
+$("#prev").onclick = () => $("#track").scrollBy({ left: -$("#track").clientWidth, behavior: "smooth" });
+$("#next").onclick = () => $("#track").scrollBy({ left: $("#track").clientWidth, behavior: "smooth" });
+$("#mclose").onclick = closeProduct;
+$("#modal").addEventListener("click", e => { if (e.target.id === "modal") closeProduct(); });
+$("#buy").onclick = () => {
+  if (!curSize) { $("#m-note").textContent = "Оберіть розмір"; return; }
+  const found = cart.find(l => l.id === cur.id && l.size === curSize);
+  found ? found.qty++ : cart.push({ id: cur.id, size: curSize, qty: 1 });
+  save(); render(); closeProduct(); openCart();
+};
 
 /* кошик */
 function render() {
@@ -209,7 +275,7 @@ $("#lines").addEventListener("click", e => {
 const openCart = () => { $("#panel").classList.add("on"); $("#shade").classList.add("on"); $("#panel").setAttribute("aria-hidden","false"); };
 const closeCart = () => { $("#panel").classList.remove("on"); $("#shade").classList.remove("on"); $("#panel").setAttribute("aria-hidden","true"); };
 $("#open").onclick = openCart; $("#close").onclick = closeCart; $("#shade").onclick = closeCart;
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeCart(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeCart(); closeProduct(); } });
 
 /* замовлення в Telegram */
 $("#order").addEventListener("submit", e => {
