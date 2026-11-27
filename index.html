@@ -81,6 +81,11 @@ input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
 .hint{font-size:13px;color:var(--mute)}
 
 
+.bar{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin:8px 0 28px}
+.bar .sec-title{margin:0}
+.sort{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
+.sort select{font:inherit;color:var(--ink);padding:9px 34px 9px 12px;border:1px solid var(--ink);border-radius:2px;background:var(--paper);cursor:pointer}
+
 /* вікно товару */
 .card{cursor:pointer}
 .card:hover h3{text-decoration:underline}
@@ -135,7 +140,16 @@ input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px}
   </section>
 
   <section id="catalog">
-    <h2 class="sec-title">Каталог</h2>
+    <div class="bar">
+      <h2 class="sec-title">Каталог</h2>
+      <label class="sort">Сортування
+        <select id="sort">
+          <option value="">За замовчуванням</option>
+          <option value="desc">Від дорогих до дешевих</option>
+          <option value="asc">Від дешевих до дорогих</option>
+        </select>
+      </label>
+    </div>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -208,11 +222,11 @@ const PRODUCTS = [
   { id: 15, name: "Шоколадні лофери, всередині хутро (натуральна замша)", price: 1550, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-17_14-16-52.jpg", "photo_2026-11-17_14-16-55.jpg"], desc: "" },
   { id: 16, name: "Капучино автоледі на липучці та резинці MIU MIU, всередині хутро (натуральна замша)", price: 1600, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-17_16-57-27.jpg", "photo_2026-11-17_16-57-29.jpg", "photo_2026-11-17_16-57-32.jpg"], desc: "" },
   { id: 17, name: "Шоколадні автоледі на липучці та шнурівці MIU MIU, всередині хутро (натуральна замша)", price: 1600, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_14-28-24.jpg", "photo_2026-11-27_14-28-28.jpg", "photo_2026-11-27_14-28-30.jpg"], desc: "" },
-  { id: 18, name: "Чoрні кеди alo, всередині хутро (натуральна замша)", price: 1550, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-03-52.jpg", "photo_2026-11-27_15-03-54.jpg"], desc: "" },
-  { id: 19, name: "Чoрні кеди alo, всередині хутро (натуральна замша)", price: 1550, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-08-46.jpg", "photo_2026-11-27_15-08-47.jpg"], desc: "" },
-  { id: 20, name: "Чoрні угги на замочку, всередині хутро (натуральна замша)", price: 1100, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-14-19.jpg", "photo_2026-11-27_15-14-21.jpg"], desc: "" },
-  { id: 21, name: "Чoрні угги, всередині хутро (натуральна замша)", price: 1100, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-16-59.jpg", "photo_2026-11-27_15-17-01.jpg"], desc: "" },
-  { id: 22, name: "Чoрні угги, всередині хутро (натуральна замша)", price: 1100, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-21-29.jpg", "photo_2026-11-27_15-21-32.jpg"], desc: "" },
+  { id: 18, name: "Чорні кеди alo, всередині хутро (натуральна замша)", price: 1550, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-03-52.jpg", "photo_2026-11-27_15-03-54.jpg"], desc: "" },
+  { id: 19, name: "Чорні кеди alo, всередині хутро (натуральна замша)", price: 1550, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-08-46.jpg", "photo_2026-11-27_15-08-47.jpg"], desc: "" },
+  { id: 20, name: "Чорні угги на замочку, всередині хутро (натуральна замша)", price: 1100, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-14-19.jpg", "photo_2026-11-27_15-14-21.jpg"], desc: "" },
+  { id: 21, name: "Чорні угги, всередині хутро (натуральна замша)", price: 1100, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-16-59.jpg", "photo_2026-11-27_15-17-01.jpg"], desc: "" },
+  { id: 22, name: "Чорні угги, всередині хутро (натуральна замша)", price: 1100, sizes: [37,38,39,40,41], imgs: ["photo_2026-11-27_15-21-29.jpg", "photo_2026-11-27_15-21-32.jpg"], desc: "" },
   { id: 23, name: "Чорні угги (натуральна замша) всередині хутро", price: 1400, sizes: [36,37,38,39], imgs: ["photo_2026-11-27_15-23-27.jpg", "photo_2026-11-27_15-23-29.jpg"], desc: "" },
   { id: 24, name: "Шоколадні кросівки New Balance всередині хутро (еко шкіра-замша)", price: 1430, sizes: [36,37,38,39,40], imgs: ["photo_2026-11-16_00-27-14.jpg","photo_2026-11-16_00-27-16.jpg"], desc: "" }
 ];
@@ -234,6 +248,15 @@ $("#grid").innerHTML = PRODUCTS.map(p => `
     <h3>${esc(p.name)}</h3>
     <div class="price">${fmt(p.price)}</div>
   </article>`).join("");
+
+$("#sort").addEventListener("change", () => {
+  const mode = $("#sort").value;
+  const price = el => PRODUCTS.find(p => p.id === +el.dataset.id).price;
+  const order = PRODUCTS.map(p => p.id);
+  const cards = [...$("#grid").children];
+  cards.sort((a, b) => mode === "asc" ? price(a) - price(b) : mode === "desc" ? price(b) - price(a) : order.indexOf(+a.dataset.id) - order.indexOf(+b.dataset.id));
+  cards.forEach(c => $("#grid").appendChild(c));
+});
 
 let cur = null, curSize = null;
 function openProduct(id) {
