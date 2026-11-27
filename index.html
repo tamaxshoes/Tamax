@@ -197,7 +197,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--ink);outline-off
   <div id="lines"></div>
   <div class="total"><span>Разом</span><strong id="total">0</strong></div>
   <form id="order">
-    <input name="name" placeholder="Ім’я" required autocomplete="name">
+    <input name="name" placeholder="ПІБ" required autocomplete="name">
     <input name="phone" placeholder="Телефон" required autocomplete="tel" inputmode="tel">
     <input name="city" placeholder="Місто" required autocomplete="address-level2">
     <select name="carrier" required>
@@ -342,7 +342,7 @@ $("#order").addEventListener("submit", e => {
     const p = PRODUCTS.find(x => x.id === l.id); sum += p.price * l.qty;
     return `• ${p.name}, розмір ${l.size}, ${l.qty} шт. — ${fmt(p.price * l.qty)}`;
   }).join("\n");
-  const text = `Нове замовлення Tamax\n\n${items}\n\nРазом: ${fmt(sum)}\n\nІм’я: ${f.get("name")}\nТелефон: ${f.get("phone")}\nМісто: ${f.get("city")}\nДоставка: ${f.get("carrier")}\nВідділення: ${f.get("branch")}` +
+  const text = `Нове замовлення Tamax\n\n${items}\n\nРазом: ${fmt(sum)}\n\nПІБ: ${f.get("name")}\nТелефон: ${f.get("phone")}\nМісто: ${f.get("city")}\nДоставка: ${f.get("carrier")}\nВідділення: ${f.get("branch")}` +
     (f.get("comment") ? `\nКоментар: ${f.get("comment")}` : "");
   window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(text)}`, "_blank");
 });
